@@ -103,8 +103,10 @@ public final class LongAdaptiveRadixTreeMap<V> {
     }
 
     public void clear() {
-        // produces garbage
-        root = null;
+        if (root != null) {
+            root.clear();
+            root = null;
+        }
     }
 
     /**

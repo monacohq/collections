@@ -1,0 +1,244 @@
+buildscript {
+    repositories {
+        maven {
+            // Get the Artifactory url, username, password from system env
+            // If not defined on the system env, then try find them from gradle.properties
+            url((System.getenv("ARTIFACTORY_URL") != null ? System.getenv("ARTIFACTORY_URL") : "${ARTIFACTORY_URL}") + "/deriv-jcenter")
+            credentials {
+                username = System.getenv("ARTIFACTORY_USER")
+                password = System.getenv("ARTIFACTORY_APIKEY")
+            }
+        }
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'com.jfrog.artifactory' version '4.18.2' apply false
+    id 'devops-gradle-plugins.jFrogPlugin' version '1.0.1-SNAPSHOT' apply false
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'java'
+    id 'application'
+    id 'net.minecrell.licenser' version '0.4.1'
+}
+
+ext {
+    artifactoryUsername = project.buildscript.repositories.maven.credentials.username
+    artifactoryPassword = project.buildscript.repositories.maven.credentials.password
+}
+
+apply plugin: 'checkstyle'
+//apply plugin: 'signing'
+apply plugin: 'maven-publish'
+apply plugin: 'java-library'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'devops-gradle-plugins.jFrogPlugin'
+
+def collectionsVersion = file('version.txt').text.trim()
+group = 'exchange.core2'
+version = collectionsVersion
+
+defaultTasks('clean', 'licenseFormat', 'check', 'assemble', 'shadowJar')
+
+jfrog {
+    artifactoryUsername = rootProject.artifactoryUsername
+    artifactoryPassword = rootProject.artifactoryPassword
+    buildName = rootProject.jfrog.buildName
+    mavenDevRepo = 'deriv-maven-dev-local'
+    mavenProdRepo = 'deriv-maven-prod-local'
+}
+repositories {
+    maven {
+        url jfrog.artifactoryUrl + "/deriv-jcenter"
+        credentials {
+            username = jfrog.artifactoryUsername
+            password = jfrog.artifactoryPassword
+        }
+    }
+}
+
+ext {
+    fullName = 'Babl WebSocket Server'
+    fullDescription = 'Babl: A High-Performance WebSocket Server'
+    teamName = 'Aitu Software Limited'
+    siteUrl = 'https://babl.ws'
+    sourceUrl = 'https://github.com/babl-ws/babl.git'
+
+    javaCompilerExecutable = System.env['JAVA_HOME'] ? System.env['JAVA_HOME'] + '/bin/javac' : 'javac'
+    if (!project.hasProperty('sonatypeUrl')) sonatypeUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+    if (!project.hasProperty('sonatypeUsername')) sonatypeUsername = ''
+    if (!project.hasProperty('sonatypePassword')) sonatypePassword = ''
+}
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'babl'
+            from components.java
+            pom {
+                name = fullName
+                description = fullDescription
+                url = siteUrl
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'epickrram'
+                        name = 'Mark Price'
+                        email = 'babl@aitusoftware.com'
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/babl-ws/babl.git"
+                    developerConnection = "scm:git:https://github.com/babl-ws/babl.git"
+                    url = sourceUrl
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url jfrog.artifactoryUrl + "/deriv-jcenter"
+            credentials {
+                username = jfrog.artifactoryUsername
+                password = jfrog.artifactoryPassword
+            }
+        }
+    }
+}
+artifactory {
+    contextUrl = jfrog.artifactoryUrl
+    publish {
+        repository {
+            repoKey = jfrog.mavenDevRepo // The Artifactory repository key to publish to
+            username = jfrog.artifactoryUsername
+            password = jfrog.artifactoryPassword
+        }
+        defaults {
+            // Reference to Gradle publications defined in the build script.
+            // This is how we tell the Artifactory Plugin which artifacts should be
+            // published to Artifactory.
+            publications('mavenJava')
+            publishPom = true
+            publishArtifacts = true
+        }
+    }
+    clientConfig.info.setBuildNumber(jfrog.buildId + jfrog.mavenBuildIdSuffix)
+}
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}
+
+
+shadowJar {
+    mainClassName = 'com.aitusoftware.babl.websocket.BablServer'
+}
+
+configurations {
+    codegen
+    jmh
+}
+
+File generatedSrcDir = file("${buildDir}/generated-sources/java")
+
+sourceSets {
+    main {
+        java.srcDirs += generatedSrcDir
+    }
+    jmh {
+        java.srcDirs += 'src/jmh/java'
+        compileClasspath += project.sourceSets.test.compileClasspath
+        runtimeClasspath += project.sourceSets.main.compileClasspath
+    }
+}
+
+dependencies {
+    implementation 'org.agrona:agrona:1.9.0'
+
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.27'
+
+    jmhImplementation 'org.openjdk.jmh:jmh-core:1.28'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testImplementation 'org.mockito:mockito-core:3.8.0'
+    testImplementation 'com.google.truth:truth:1.1.2'
+    testImplementation 'io.vertx:vertx-core:3.9.4'
+    testImplementation 'io.vertx:vertx-web:3.9.4'
+    testImplementation 'org.hdrhistogram:HdrHistogram:2.1.12'
+    testImplementation 'org.awaitility:awaitility:4.0.3'
+    testImplementation 'com.caucho:resin:4.0.65'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+}
+
+compileJava.dependsOn('generateCodecs')
+
+task generateCodecs(type: JavaExec) {
+    main 'uk.co.real_logic.sbe.SbeTool'
+    classpath configurations.codegen.asPath
+    jvmArgs = ["-Dsbe.output.dir=${generatedSrcDir.getAbsolutePath()}", '-Dsbe.generate.ir=true', '-Dsbe.java.generate.interfaces=true']
+    args "${project.projectDir}/src/main/resources/sbe-schema.xml"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task benchmarkJar(type: Jar) {
+    manifest {
+        attributes('Main-Class': 'org.openjdk.jmh.Main')
+    }
+    archiveClassifier = 'benchmarks'
+    from sourceSets.jmh.output
+    from sourceSets.main.output
+    from sourceSets.jmh.runtimeClasspath.collect {
+        if (it.exists()) {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            "Implementation-Title": "Babl",
+            "Implementation-Version": project.version,
+            "Implementation-Vendor": "Aitu Software Limited",
+            "Automatic-Module-Name": "com.aitusoftware.babl"
+        )
+    }
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+javadoc {
+}
+
+checkstyle {
+    toolVersion = '8.20'
+    sourceSets = project.sourceSets
+}
+
+license {
+    header = new File(rootDir, 'config/header.txt')
+    newLine = false
+}

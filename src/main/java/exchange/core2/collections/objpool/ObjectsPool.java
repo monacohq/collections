@@ -15,6 +15,11 @@
  */
 package exchange.core2.collections.objpool;
 
+import exchange.core2.collections.art.ArtNode16;
+import exchange.core2.collections.art.ArtNode256;
+import exchange.core2.collections.art.ArtNode4;
+import exchange.core2.collections.art.ArtNode48;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -96,10 +101,13 @@ public final class ObjectsPool {
         }
 
         void add(Object element) {
-            if (count != objects.length) {
-                objects[count] = element;
-                count++;
+            if (count == objects.length) {
+                final Object[] newObjects = new Object[objects.length * 2];
+                System.arraycopy(objects, 0, newObjects, 0, count);
+                objects = newObjects;
             }
+            objects[count] = element;
+            count++;
         }
 
         Object pop() {

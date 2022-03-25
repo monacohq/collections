@@ -71,4 +71,6 @@ public interface IArtNode<V> {
 
 
     ObjectsPool getObjectsPool();
+
+    void clear();
 }
