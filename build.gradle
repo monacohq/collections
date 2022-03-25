@@ -19,7 +19,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java'
     id 'application'
-    id 'net.minecrell.licenser' version '0.4.1'
 }
 
 ext {
@@ -27,7 +26,6 @@ ext {
     artifactoryPassword = project.buildscript.repositories.maven.credentials.password
 }
 
-apply plugin: 'checkstyle'
 //apply plugin: 'signing'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
@@ -37,8 +35,6 @@ apply plugin: 'devops-gradle-plugins.jFrogPlugin'
 def collectionsVersion = file('version.txt').text.trim()
 group = 'exchange.core2'
 version = collectionsVersion
-
-defaultTasks('clean', 'licenseFormat', 'check', 'assemble', 'shadowJar')
 
 jfrog {
     artifactoryUsername = rootProject.artifactoryUsername
@@ -90,24 +86,6 @@ publishing {
                 name = fullName
                 description = fullDescription
                 url = siteUrl
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'epickrram'
-                        name = 'Mark Price'
-                        email = 'babl@aitusoftware.com'
-                    }
-                }
-                scm {
-                    connection = "scm:git:https://github.com/babl-ws/babl.git"
-                    developerConnection = "scm:git:https://github.com/babl-ws/babl.git"
-                    url = sourceUrl
-                }
             }
         }
     }
@@ -184,18 +162,11 @@ dependencies {
     testImplementation 'org.hdrhistogram:HdrHistogram:2.1.12'
     testImplementation 'org.awaitility:awaitility:4.0.3'
     testImplementation 'com.caucho:resin:4.0.65'
+    testImplementation 'org.slf4j:slf4j-api:1.7.30'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
 }
 
-compileJava.dependsOn('generateCodecs')
-
-task generateCodecs(type: JavaExec) {
-    main 'uk.co.real_logic.sbe.SbeTool'
-    classpath configurations.codegen.asPath
-    jvmArgs = ["-Dsbe.output.dir=${generatedSrcDir.getAbsolutePath()}", '-Dsbe.generate.ir=true', '-Dsbe.java.generate.interfaces=true']
-    args "${project.projectDir}/src/main/resources/sbe-schema.xml"
-}
 
 test {
     useJUnitPlatform()
@@ -231,14 +202,4 @@ artifacts {
 }
 
 javadoc {
-}
-
-checkstyle {
-    toolVersion = '8.20'
-    sourceSets = project.sourceSets
-}
-
-license {
-    header = new File(rootDir, 'config/header.txt')
-    newLine = false
 }

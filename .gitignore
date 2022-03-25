@@ -1,6 +1,7 @@
 target/
 delombok/
 .mvn/
+build/
 
 ### IntelliJ IDEA ###
 .idea
