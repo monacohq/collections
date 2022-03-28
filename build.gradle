@@ -16,7 +16,6 @@ buildscript {
 plugins {
     id 'com.jfrog.artifactory' version '4.18.2' apply false
     id 'devops-gradle-plugins.jFrogPlugin' version '1.0.1-SNAPSHOT' apply false
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java'
     id 'application'
 }
@@ -54,11 +53,11 @@ repositories {
 }
 
 ext {
-    fullName = 'Babl WebSocket Server'
-    fullDescription = 'Babl: A High-Performance WebSocket Server'
-    teamName = 'Aitu Software Limited'
-    siteUrl = 'https://babl.ws'
-    sourceUrl = 'https://github.com/babl-ws/babl.git'
+    fullName = 'Long ART Map'
+    fullDescription = 'Exchange Collections is an open source high performance Java collections project. -Adaptive Radix Tree'
+    teamName = 'mzheravin'
+    siteUrl = 'https://github.com/exchange-core/collections.git'
+    sourceUrl = 'https://github.com/exchange-core/collections.git'
 
     javaCompilerExecutable = System.env['JAVA_HOME'] ? System.env['JAVA_HOME'] + '/bin/javac' : 'javac'
     if (!project.hasProperty('sonatypeUrl')) sonatypeUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
@@ -80,7 +79,7 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = 'babl'
+            artifactId = 'collections'
             from components.java
             pom {
                 name = fullName
@@ -123,11 +122,6 @@ artifactory {
 //signing {
 //    sign publishing.publications.mavenJava
 //}
-
-
-shadowJar {
-    mainClassName = 'com.aitusoftware.babl.websocket.BablServer'
-}
 
 configurations {
     codegen
@@ -189,10 +183,10 @@ task benchmarkJar(type: Jar) {
 jar {
     manifest {
         attributes(
-            "Implementation-Title": "Babl",
+            "Implementation-Title": "Long ART Map",
             "Implementation-Version": project.version,
-            "Implementation-Vendor": "Aitu Software Limited",
-            "Automatic-Module-Name": "com.aitusoftware.babl"
+            "Implementation-Vendor": "mzheravin",
+            "Automatic-Module-Name": "exchange.core2.collections"
         )
     }
 }
