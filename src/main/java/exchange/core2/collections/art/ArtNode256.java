@@ -387,7 +387,7 @@ public final class ArtNode256<V> implements IArtNode<V> {
                 }
             }
         }
-        objectsPool.put(ObjectsPool.ART_NODE_16, this);
+        objectsPool.put(ObjectsPool.ART_NODE_256, this);
     }
 
     @Override
