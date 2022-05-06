@@ -377,17 +377,16 @@ public final class ArtNode256<V> implements IArtNode<V> {
 
     @Override
     public void clear() {
-        if (nodeLevel != 0) {
+        if (nodeLevel == 0) {
+            Arrays.fill(nodes, null);
+        } else {
             for (int i = 0; i < 256; i++) {
                 IArtNode<V> node = (IArtNode<V>)nodes[i];
                 if (node != null) {
                     node.clear();
                 }
             }
-
         }
-        numChildren = 0;
-        Arrays.fill(nodes, null);
         objectsPool.put(ObjectsPool.ART_NODE_16, this);
     }
 

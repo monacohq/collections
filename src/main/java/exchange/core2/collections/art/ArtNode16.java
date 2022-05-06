@@ -461,15 +461,14 @@ public final class ArtNode16<V> implements IArtNode<V> {
 
     @Override
     public void clear() {
-        if (nodeLevel != 0) {
+        if (nodeLevel == 0) {
+            Arrays.fill(nodes, null);
+        } else {
             for (int i = 0; i < numChildren; i++) {
                 IArtNode<V> node = (IArtNode<V>)nodes[i];
                 node.clear();
             }
-
         }
-        numChildren = 0;
-        Arrays.fill(nodes, null);
         objectsPool.put(ObjectsPool.ART_NODE_16, this);
     }
 

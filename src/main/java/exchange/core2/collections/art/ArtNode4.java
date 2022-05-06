@@ -17,7 +17,6 @@ package exchange.core2.collections.art;
 
 import exchange.core2.collections.objpool.ObjectsPool;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -492,14 +491,14 @@ public final class ArtNode4<V> implements IArtNode<V> {
 
     @Override
     public void clear() {
-        if (nodeLevel != 0) {
-          for (int i = 0; i < numChildren; i++) {
-            IArtNode<V> node = (IArtNode<V>)nodes[i];
-            node.clear();
-          }
+        if (nodeLevel == 0) {
+            Arrays.fill(nodes, null);
+        } else {
+            for (int i = 0; i < numChildren; i++) {
+                IArtNode<V> node = (IArtNode<V>)nodes[i];
+                node.clear();
+            }
         }
-      numChildren = 0;
-        Arrays.fill(nodes, null);
         objectsPool.put(ObjectsPool.ART_NODE_4, this);
     }
 

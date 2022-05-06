@@ -463,7 +463,9 @@ public final class ArtNode48<V> implements IArtNode<V> {
 
     @Override
     public void clear() {
-        if (nodeLevel != 0) {
+        if (nodeLevel == 0) {
+            Arrays.fill(nodes, null);
+        } else {
             for (int i = 0; i < 48; i++) {
                 IArtNode<V> node = (IArtNode<V>)nodes[i];
                 if (node != null) {
@@ -471,8 +473,6 @@ public final class ArtNode48<V> implements IArtNode<V> {
                 }
             }
         }
-        numChildren = 0;
-        Arrays.fill(nodes, null);
         objectsPool.put(ObjectsPool.ART_NODE_48, this);
     }
 
