@@ -467,9 +467,10 @@ public final class ArtNode48<V> implements IArtNode<V> {
             Arrays.fill(nodes, null);
         } else {
             for (int i = 0; i < 48; i++) {
-                IArtNode<V> node = (IArtNode<V>)nodes[i];
+                IArtNode<V> node = (IArtNode<V>) nodes[i];
                 if (node != null) {
                     node.clear();
+                    nodes[i] = null;
                 }
             }
         }

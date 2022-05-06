@@ -467,6 +467,7 @@ public final class ArtNode16<V> implements IArtNode<V> {
             for (int i = 0; i < numChildren; i++) {
                 IArtNode<V> node = (IArtNode<V>)nodes[i];
                 node.clear();
+                nodes[i] = null;
             }
         }
         objectsPool.put(ObjectsPool.ART_NODE_16, this);
