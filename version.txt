@@ -1,1 +1,1 @@
-0.5.1-gc-free-clear
+0.5.1-gc-free-clear-bug-fix
