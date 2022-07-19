@@ -1,15 +1,12 @@
 buildscript {
     repositories {
         maven {
-            // Get the Artifactory url, username, password from system env
-            // If not defined on the system env, then try find them from gradle.properties
-            url((System.getenv("ARTIFACTORY_URL") != null ? System.getenv("ARTIFACTORY_URL") : "${ARTIFACTORY_URL}") + "/deriv-jcenter")
+            url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
             credentials {
-                username = System.getenv("ARTIFACTORY_USER")
-                password = System.getenv("ARTIFACTORY_APIKEY")
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
             }
         }
-        mavenCentral()
     }
 }
 
@@ -44,10 +41,10 @@ jfrog {
 }
 repositories {
     maven {
-        url jfrog.artifactoryUrl + "/deriv-jcenter"
+        url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
         credentials {
-            username = jfrog.artifactoryUsername
-            password = jfrog.artifactoryPassword
+            username "aws"
+            password System.env.CODEARTIFACT_AUTH_TOKEN
         }
     }
 }
@@ -91,33 +88,33 @@ publishing {
 
     repositories {
         maven {
-            url jfrog.artifactoryUrl + "/deriv-jcenter"
+            url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
             credentials {
-                username = jfrog.artifactoryUsername
-                password = jfrog.artifactoryPassword
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
             }
         }
     }
 }
-artifactory {
-    contextUrl = jfrog.artifactoryUrl
-    publish {
-        repository {
-            repoKey = jfrog.mavenDevRepo // The Artifactory repository key to publish to
-            username = jfrog.artifactoryUsername
-            password = jfrog.artifactoryPassword
-        }
-        defaults {
-            // Reference to Gradle publications defined in the build script.
-            // This is how we tell the Artifactory Plugin which artifacts should be
-            // published to Artifactory.
-            publications('mavenJava')
-            publishPom = true
-            publishArtifacts = true
-        }
-    }
-    clientConfig.info.setBuildNumber(jfrog.buildId + jfrog.mavenBuildIdSuffix)
-}
+//artifactory {
+//    contextUrl = jfrog.artifactoryUrl
+//    publish {
+//        repository {
+//            repoKey = jfrog.mavenDevRepo // The Artifactory repository key to publish to
+//            username = jfrog.artifactoryUsername
+//            password = jfrog.artifactoryPassword
+//        }
+//        defaults {
+//            // Reference to Gradle publications defined in the build script.
+//            // This is how we tell the Artifactory Plugin which artifacts should be
+//            // published to Artifactory.
+//            publications('mavenJava')
+//            publishPom = true
+//            publishArtifacts = true
+//        }
+//    }
+//    clientConfig.info.setBuildNumber(jfrog.buildId + jfrog.mavenBuildIdSuffix)
+//}
 
 //signing {
 //    sign publishing.publications.mavenJava
