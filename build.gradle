@@ -11,8 +11,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.jfrog.artifactory' version '4.18.2' apply false
-    id 'devops-gradle-plugins.jFrogPlugin' version '1.0.1-SNAPSHOT' apply false
+//    id 'com.jfrog.artifactory' version '4.18.2' apply false
+//    id 'devops-gradle-plugins.jFrogPlugin' version '1.0.1-SNAPSHOT' apply false
     id 'java'
     id 'application'
 }
@@ -25,20 +25,20 @@ ext {
 //apply plugin: 'signing'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'devops-gradle-plugins.jFrogPlugin'
+//apply plugin: 'com.jfrog.artifactory'
+//apply plugin: 'devops-gradle-plugins.jFrogPlugin'
 
 def collectionsVersion = file('version.txt').text.trim()
 group = 'exchange.core2'
 version = collectionsVersion
 
-jfrog {
-    artifactoryUsername = rootProject.artifactoryUsername
-    artifactoryPassword = rootProject.artifactoryPassword
-    buildName = rootProject.jfrog.buildName
-    mavenDevRepo = 'deriv-maven-dev-local'
-    mavenProdRepo = 'deriv-maven-prod-local'
-}
+//jfrog {
+//    artifactoryUsername = rootProject.artifactoryUsername
+//    artifactoryPassword = rootProject.artifactoryPassword
+//    buildName = rootProject.jfrog.buildName
+//    mavenDevRepo = 'deriv-maven-dev-local'
+//    mavenProdRepo = 'deriv-maven-prod-local'
+//}
 repositories {
     maven {
         url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
