@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
+            url 'https://crypto-onex-391887914434.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
             credentials {
                 username "aws"
                 password System.env.CODEARTIFACT_AUTH_TOKEN
@@ -41,7 +41,7 @@ version = collectionsVersion
 //}
 repositories {
     maven {
-        url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
+        url 'https://crypto-onex-391887914434.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
         credentials {
             username "aws"
             password System.env.CODEARTIFACT_AUTH_TOKEN
@@ -88,7 +88,7 @@ publishing {
 
     repositories {
         maven {
-            url 'https://crypto-onex-132000379639.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
+            url 'https://crypto-onex-391887914434.d.codeartifact.ap-northeast-1.amazonaws.com/maven/central-maven/'
             credentials {
                 username "aws"
                 password System.env.CODEARTIFACT_AUTH_TOKEN
